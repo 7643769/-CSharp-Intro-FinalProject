@@ -3,7 +3,8 @@
     internal class Program
     {
         static void Main(string[] args)
-        {
+        {   
+            //2026.10.9
             Console.CursorVisible = false;
             //Console.SetWindowSize(50, 20);
             //Console.SetBufferSize(50, 20);
