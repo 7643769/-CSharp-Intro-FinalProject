@@ -124,81 +124,163 @@
                         char playerInput;
                         #endregion
 
+                        bool isFight = false;
+
                         while (true)
-                        {   
+                        {
                             #region BOSS相关逻辑 
-                            if (bossHP>0)
+                            if (bossHP > 0)
                             {
-                            Console.SetCursorPosition(bossX, bossY);
-                            Console.ForegroundColor = bossColor;
-                            Console.Write(bossIcon);
+                                Console.SetCursorPosition(bossX, bossY);
+                                Console.ForegroundColor = bossColor;
+                                Console.Write(bossIcon);
                             }
                             #endregion
-                            #region 玩家相关逻辑
-                    
+            
+                      
                             Console.SetCursorPosition(playerX, playerY);
 
                             Console.ForegroundColor = playerColor;
                             Console.Write(playerIcon);
                             playerInput = Console.ReadKey(true).KeyChar;
-                            Console.SetCursorPosition(playerX, playerY);
-                            Console.Write(" ");
-                            switch (playerInput)
+                            if (isFight)
                             {
-                                case 'W':
-                                case 'w':
-                                    --playerY;
-                                    if (playerY<1)
+                                #region 战斗逻辑
+                                if ((playerInput == 'j'||playerInput == 'J')&& (bossHP > 0) && (playerHP > 0))
+                                {
+                                    Random r = new Random();
+                                    int damage = r.Next(playerAtkMin, playerAtkMax + 1);
+                                    bossHP -= damage;
+                                    if (bossHP <= 0)
                                     {
-                                        playerY = 1;
+                                        bossHP = 0;
                                     }
-                                    else if(playerY == bossY && playerX == bossX && bossHP > 0)
+
+                                    Console.SetCursorPosition(w / 2 - 5, h - 5);
+                                    Console.Write("攻击成功,BOSS扣除" + damage + "点血,BOSS还剩" + bossHP + "点血"          );
+                                    Console.SetCursorPosition(w / 2 - 5, h - 4);
+                                    Console.Write("BOSS当前血量为{0}       ", bossHP);
+
+                                    if (bossHP == 0)
                                     {
-                                        playerY++;
+                                        isFight = false;
+                                        Console.SetCursorPosition(w / 2 - 5, h - 4);
+                                        Console.Write("攻击成功,BOSS被击败");
+                                        Console.SetCursorPosition(w / 2 - 5, h - 3);
+                                        Console.Write("恭喜玩家击败boss，快去营救舟舟                                        ");
+                                        Console.SetCursorPosition(bossX, bossY);
+                                        Console.Write(" ");
+                                    }
+                                    if(bossHP >= 0)
+                                    {
+                                    Random a = new Random();
+                                    int damage1 = a.Next(bossAtkMin, bossAtkMax + 1);
+                                    playerHP -= damage1;
+                                        if (playerHP <= 0)
+                                        {
+                                            playerHP = 0;
+                                        }
+
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.SetCursorPosition(w / 2 - 5, h - 3);
+                                    Console.Write("BOSS攻击成功,玩家扣除" + damage1 + "点血,玩家还剩" + playerHP + "点血");
+                                    Console.SetCursorPosition(w / 2 - 5, h - 2);
+                                    Console.Write("玩家当前血量为{0}       ", playerHP);
                                     }
                                     
-                                    
-                                    break;
-                                case 'S':
-                                case 's':
-                                    ++playerY;
-                                    if (playerY == h - 1 || playerY == h - 6)
+
+                                    if (playerHP == 0)
                                     {
-                                        playerY--;
+                                        isFight = false;
+                                        Console.SetCursorPosition(w / 2 - 5, h - 4);
+                                        Console.Write("玩家被击败,游戏结束");
+                                        Console.SetCursorPosition(playerX, playerY);
+                                        Console.Write(" ");
                                     }
-                                    else if (playerY == bossY && playerX == bossX && bossHP > 0)
-                                    {
-                                        playerY--;
-                                    }
-                                    break;
-                                case 'A':
-                                case 'a':
-                                    playerX -= 2;
-                                    if (playerX<2)
-                                    {
-                                        playerX = 2;
-                                    }
-                                    else if (playerY == bossY && playerX == bossX && bossHP > 0)
-                                    {
-                                        playerX+=2;
-                                    }
-                                    break;
-                                case 'D':
-                                case 'd':
-                                    playerX += 2;
-                                    if (playerX > w-2)
-                                    {
-                                        playerX -= 2;
-                                    }
-                                    else if (playerY == bossY && playerX == bossX && bossHP > 0)
-                                    {
-                                        playerX -= 2;
-                                    }
-                                    break;
+                                }
+                                #endregion
                             }
-                            Console.SetCursorPosition(playerX, playerY);
-                            Console.Write(playerIcon);
-                            #endregion
+                            else
+                            {
+                                #region 玩家移动逻辑
+
+                                Console.SetCursorPosition(playerX, playerY);
+                                Console.Write(" ");
+                                switch (playerInput)
+                                {
+                                    case 'W':
+                                    case 'w':
+                                        --playerY;
+                                        if (playerY < 1)
+                                        {
+                                            playerY = 1;
+                                        }
+                                        else if (playerY == bossY && playerX == bossX && bossHP > 0)
+                                        {
+                                            playerY++;
+                                        }
+
+
+                                        break;
+                                    case 'S':
+                                    case 's':
+                                        ++playerY;
+                                        if (playerY == h - 1 || playerY == h - 6)
+                                        {
+                                            playerY--;
+                                        }
+                                        else if (playerY == bossY && playerX == bossX && bossHP > 0)
+                                        {
+                                            playerY--;
+                                        }
+                                        break;
+                                    case 'A':
+                                    case 'a':
+                                        playerX -= 2;
+                                        if (playerX < 2)
+                                        {
+                                            playerX = 2;
+                                        }
+                                        else if (playerY == bossY && playerX == bossX && bossHP > 0)
+                                        {
+                                            playerX += 2;
+                                        }
+                                        break;
+                                    case 'D':
+                                    case 'd':
+                                        playerX += 2;
+                                        if (playerX > w - 2)
+                                        {
+                                            playerX -= 2;
+                                        }
+                                        else if (playerY == bossY && playerX == bossX && bossHP > 0)
+                                        {
+                                            playerX -= 2;
+                                        }
+                                        break;
+                                    case 'J':
+                                    case 'j':
+                                        
+                                        if ((playerX == bossX && playerY == bossY - 1 ||
+                                            playerX == bossX && playerY == bossY + 1 ||
+                                            playerX == bossX - 2 && playerY == bossY ||
+                                            playerX == bossX + 2 && playerY == bossY)&&(bossHP > 0))
+                                        {
+                                            isFight = true;
+                                            Console.SetCursorPosition(w / 2 , h - 5);
+                                            Console.Write("进入战斗");
+                                        }
+                                        
+
+                                        break;
+
+                                }
+                                Console.SetCursorPosition(playerX, playerY);
+                                Console.Write(playerIcon);
+                                #endregion
+                            }
+                            
+                        
                         }
 
 
